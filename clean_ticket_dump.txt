@@ -1,0 +1,45 @@
+/** @OnlyCurrentDoc */
+
+function cleanTicketDump() {
+  // Delete irrelevant sheets
+  var ss = SpreadsheetApp.getActive();
+  var sheet = ss.getSheetByName('Ticket Archive');
+  ss.deleteSheet(sheet); 
+  sheet = ss.getSheetByName('Job Code Sessions');
+  ss.deleteSheet(sheet); 
+  sheet = ss.getSheetByName('Approvals');
+  ss.deleteSheet(sheet); 
+
+  // Move and delete columns
+  ss.getRange('B:B').activate();
+  ss.getActiveSheet().deleteColumns(ss.getActiveRange().getColumn(), ss.getActiveRange().getNumColumns());
+  ss.getRange('C:H').activate();
+  ss.getActiveSheet().deleteColumns(ss.getActiveRange().getColumn(), ss.getActiveRange().getNumColumns());
+  ss.getRange('D:T').activate();
+  ss.getActiveSheet().deleteColumns(ss.getActiveRange().getColumn(), ss.getActiveRange().getNumColumns());
+  ss.getRange('E:CB').activate();
+  ss.getActiveSheet().deleteColumns(ss.getActiveRange().getColumn(), ss.getActiveRange().getNumColumns());
+  ss.getActiveSheet().moveColumns(ss.getRange('D:D'), 2);
+
+  // Rename header columns
+  ss.getRange('B1').activate();
+  ss.getCurrentCell().setValue('Date');
+  ss.getRange('D1').activate();
+  ss.getCurrentCell().setValue('Machine');
+
+  // Delete rows with empty summaries
+  var ss = SpreadsheetApp.getActive();
+  var rows = ss.getDataRange();
+  var numRows = rows.getNumRows();
+  var values = rows.getValues();
+
+  var rowsDeleted = 0;
+  for (var i = 1; i <= numRows - 1; i++) { // Starts at row 2; preserves header columns in row 1
+    var col = values[i];
+    if (col[2] === "") { // Where col[2] == column C
+      ss.deleteRow((parseInt(i) + 1) - rowsDeleted);
+      rowsDeleted++;
+    }
+  }
+
+};

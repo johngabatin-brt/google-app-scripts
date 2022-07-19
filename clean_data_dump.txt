@@ -1,0 +1,66 @@
+/** @OnlyCurrentDoc */
+
+function cleanDataDump() {
+  // Move and delete columns
+  var ss = SpreadsheetApp.getActive();
+  ss.getRange('A:I').activate();
+  ss.getActiveSheet().deleteColumns(ss.getActiveRange().getColumn(), ss.getActiveRange().getNumColumns());
+  ss.getRange('B:B').activate();
+  ss.getActiveSheet().deleteColumns(ss.getActiveRange().getColumn(), ss.getActiveRange().getNumColumns());
+  ss.getRange('C:D').activate();
+  ss.getActiveSheet().deleteColumns(ss.getActiveRange().getColumn(), ss.getActiveRange().getNumColumns());
+  ss.getRange('D:E').activate();
+  ss.getActiveSheet().deleteColumns(ss.getActiveRange().getColumn(), ss.getActiveRange().getNumColumns());
+  ss.getRange('I:J').activate();
+  ss.getActiveSheet().deleteColumns(ss.getActiveRange().getColumn(), ss.getActiveRange().getNumColumns());
+  ss.getRange('J:O').activate();
+  ss.getActiveSheet().deleteColumns(ss.getActiveRange().getColumn(), ss.getActiveRange().getNumColumns());
+  ss.getRange('K:K').activate();
+  ss.getActiveSheet().deleteColumns(ss.getActiveRange().getColumn(), ss.getActiveRange().getNumColumns());
+  ss.getRange('J:J').activate();
+  ss.getActiveSheet().moveColumns(ss.getRange('J:J'), 1);
+  ss.getRange('C:D').activate();
+  ss.setCurrentCell(ss.getRange('D1'));
+  ss.getRange('D:D').activate();
+  ss.getActiveSheet().moveColumns(ss.getRange('D:D'), 1);
+
+  // Rename column headers
+  ss.getRange('A1').activate();
+  ss.getCurrentCell().setValue('Timestamp');
+  ss.getRange('B1').activate();
+  ss.getCurrentCell().setValue('Field');
+  ss.getRange('C1').activate();
+  ss.getCurrentCell().setValue('Crop');
+  ss.getRange('D1').activate();
+  ss.getCurrentCell().setValue('Field URL');
+  ss.getRange('E1').activate();
+  ss.getCurrentCell().setValue('Herbicide Applied (gal)');
+  ss.getRange('F1').activate();
+  ss.getCurrentCell().setValue('Acres Covered');
+  ss.getRange('G1').activate();
+  ss.getCurrentCell().setValue('Acres S&S On');
+  ss.getRange('H1').activate();    
+  ss.getCurrentCell().setValue('Acres S&S Sprayed');
+  ss.getRange('I1').activate();    
+  ss.getCurrentCell().setValue('Average Weed Pressure (%)');
+  ss.getRange('J1').activate();    
+  ss.getCurrentCell().setValue('Area Savings (%)');
+  ss.getRange('K1').activate();
+  ss.getCurrentCell().setValue('Comments');
+
+  // Delete rows where 'Acres S&S Sprayed' is < 10 acres or 'Acres Covered' < 'Acres S&S Sprayed'
+  var rows = ss.getDataRange();
+  var numRows = rows.getNumRows();
+  var values = rows.getValues();
+
+  var rowsDeleted = 0;
+  for (var i = 1; i <= numRows - 1; i++) { // Starts at row 2; preserves header columns in row 1
+    var col = values[i];
+    if (col[6] < 10 || col[6] < col[7]) { // Where col[0] == column A
+      console.log("Deleting cell in column G with data ", col[6], " comparing to column H with data", col[7]);
+      ss.deleteRow((parseInt(i) + 1) - rowsDeleted);
+      rowsDeleted++;
+    }
+  }
+
+};
